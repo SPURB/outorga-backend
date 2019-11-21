@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "SPUrbanismo";
+}
+
+    <div class="jumbotron">
+        <h3>SPUrbanismo - API Cepacs @User.Identity.Name</h3>
+        <a href="@String.Concat(Request.Url.AbsoluteUri, "/api/fila")">Fila</a><br />
+        <a href="@String.Concat(Request.Url.AbsoluteUri, "/api/sqls")">SQL</a><br />
+        <a href="@String.Concat(Request.Url.AbsoluteUri, "/api/status")">Status</a><br />
+        <a href="@String.Concat(Request.Url.AbsoluteUri, "/api/estoque")">Estoque</a><br />
+        <a href="@String.Concat(Request.Url.AbsoluteUri, "/api/setores")">Setores</a><br />
+    </div>
