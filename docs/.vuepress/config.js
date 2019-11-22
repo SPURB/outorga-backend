@@ -9,6 +9,7 @@ module.exports = {
         }
     },
     themeConfig: {
-        search: false,
+        search: false
+        // sidebar: [['/', 'Guide' ], ['/demos/intro', 'DEMO: Introduction']],
     }
 }
