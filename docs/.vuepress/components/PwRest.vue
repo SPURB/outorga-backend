@@ -1,15 +1,30 @@
 <template>
 	<section class='pw-rest'>
-		<p class="pw-rest__item"><span>method</span> <code>{{ method }}</code></p>
-		<p class="pw-rest__item">path<code>{{ path }}</code></p>
-		<p class="pw-rest__item">url: <code>{{ url }}</code></p>
-		<div class="pw-rest__item">
-			<h4>Exemplo de requisição: </h4>
-			<div class="language-sh extra-class"><pre class="language-sh"><code><span class="token function">curl</span>{{ requestExample }}</code></pre></div>
+		<h2 class="pw-rest__item">{{ method }} <a :href="url + path">/{{ path }}</a></h2>
+		<code class="pw-rest__item">{{ url }}{{ path }}</code>
+		<p class="pw-rest__item description">{{ description }}</p>
+		<div class="pw-rest__item example">
+			<h4>Exemplo de requisição</h4>
+			<h4>{{ path }}</h4>
+
+			<select v-model="selectedRequestType">
+				<option>JavaScript XHR</option>
+				<option>Fetch</option>
+				<option>cURL</option>
+			</select>
+
+			<div 
+				class="extra-class"
+				:class="{ 
+					'language-sh': selectedRequestType === 'cURL',
+					'language-js': selectedRequestType === 'Fetch' || selectedRequestType === 'JavaScript XHR',
+				}"
+				@click.prevent="copyRequestExample(ui.requestExample)"
+				><pre><code>{{ ui.requestExample }}</code></pre></div>
 		</div>
 		<div v-if="api.message !== ''" class="pw-rest__item">
-			<h4>Resposta</h4><span v-if="api.message !== ''" class="badge" :class="{ 'error': api.error }">{{ api.message }}</span>
-			<div class="language-json extra-class"><pre class="language-json"><code>{{ stringfy(api.response) }}</code></pre></div>
+			<h4>Resposta</h4><span class="badge" :class="{ 'error': api.error }">{{ api.message }}</span>
+			<div class="language-json extra-class"><pre class="language-json"><code>{{ stringfyRes(api.response) }}</code></pre></div>
 		</div>
 		<button id="send" @click.prevent="send(`${url}${path}`, method)">{{ ui.btnTest }} {{ path }}</button>
 	</section>
@@ -21,31 +36,66 @@ export default {
 	data() {
 		return {
 			ui: {
-				btnTest: 'Testar'
+				btnTest: 'Testar',
+				requestType: 'cURL',
+				requestExample: '',
 			},
 			api: {
-				response: 'Aguardando envio',
+				response: 'Enviando',
 				message: '',
 				error: false
 			}
 		}
 	},
 	computed: {
-		requestExample () {
-			switch(this.method) {
-				case 'GET' : return ` -X GET ${this.url}${this.path}`
-				case 'POST': return `
-					curl -X POST \
-						'${this.url}${this.path}' \
-						-H 'Content-Length: 2' \
-						-H 'Content-Type: application/json; charset=utf-8' \
-						-d '${this.bodyParams}'`
+		selectedRequestType: {
+			get () {
+				return this.ui.requestType
+			},
+			set (newReqStr) {
+				this.ui.requestType = newReqStr
 			}
 		}
 	},
+	watch: {
+		selectedRequestType (reqType) {
+			this.ui.requestExample = this.getRequestExample(reqType, this.method, `${this.url}${this.path}`)
+		}
+	},
+	created () {
+		if (this.requestType !== 'cURL') this.ui.requestType = this.requestType
+		this.ui.requestExample = this.getRequestExample(this.requestType, this.method, `${this.url}${this.path}`)
+	},
 	methods: {
-		stringfy(jsonStr) {
-			return JSON.parse(JSON.stringify(jsonStr), null,2)
+		copyRequestExample(str) {
+			console.log(str)
+		},
+		getRequestExample(reqType, method, reqUrl) {
+			if (method === 'GET') {
+				switch (reqType) {
+					case 'Fetch': return `fetch('${reqUrl}', {
+	method: 'GET',
+	credentials: 'same-origin'
+	}).then(function(response) {
+		response.status
+		response.statusText
+		response.headers
+		response.url
+		return response.text()
+	}).catch(function(error) {
+		error.message
+})`
+					case 'JavaScript XHR': return `const xhr = new XMLHttpRequest()
+xhr.open('GET', '${reqUrl}', true, null, null)
+xhr.send()`
+
+					default: return `cURL -X GET ${reqUrl}`; break // default is cURL
+				}
+			}
+			else throw new Error (`invalid params reqType:${reqType} or method: ${method} or reqUrl: ${reqUrl}`)
+		},
+		stringfyRes(jsonStr) {
+			return JSON.parse(jsonStr, null,2)
 		},
 		send (fullUrl, method) {
 			const oReq = new XMLHttpRequest()
@@ -53,7 +103,7 @@ export default {
 
 			oReq.addEventListener("load", evt => {
 				this.api.response = evt.target.response
-				this.api.message = 'Sucesso!'
+				this.api.message = 'Exemplo de resposta'
 				this.ui.btnTest = 'Testar novamente'
 			})
 			oReq.addEventListener("error", evt => {
@@ -69,6 +119,10 @@ export default {
 		}
 	},
 	props: {
+		description: {
+			type: String,
+			default: ''
+		},
 		url: {
 			type: String,
 			required: true
@@ -141,7 +195,8 @@ export default {
 					'Fetch',
 					'cURL'
 				].indexOf(value) !== -1
-			}
+			},
+			default: 'cURL'
 		},
 		passwordFieldType: {
 			type: String,

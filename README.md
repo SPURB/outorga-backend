@@ -1,5 +1,5 @@
 # API das outorgas [![Build Status](https://travis-ci.org/SPURB/outorga-backend.svg?branch=master)](https://travis-ci.org/SPURB/outorga-backend)
-Documentação da API REST de cadastro e acompanhamento das outorgas onerosas das Operações Urbanas Consorciadas gerenciados pela São Paulo Urbanismo.
+API REST de cadastro e acompanhamento das outorgas onerosas das Operações Urbanas Consorciadas gerenciados pela São Paulo Urbanismo.
 
 Veja a documentação [em desenvolvimento]:
 [spurb.github.io/outorga-backend/](http://spurb.github.io/outorga-backend/)
