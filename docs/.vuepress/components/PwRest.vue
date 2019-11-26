@@ -1,11 +1,11 @@
 <template>
 	<section class='pw-rest'>
-		<h2 class="pw-rest__item">{{ method }} <a :href="url + path">/{{ path }}</a></h2>
-		<code class="pw-rest__item">{{ url }}{{ path }}</code>
+		<h2 class="pw-rest__item">{{ method }} <a :href="url + path">/{{ setPath }}</a></h2>
+		<code class="pw-rest__item">{{ url }}{{ setPath }}</code>
 		<p class="pw-rest__item description">{{ description }}</p>
 		<div class="pw-rest__item example">
 			<h4>Exemplo de requisição</h4>
-			<h4>{{ path }}</h4>
+			<h4>{{ setPath }}</h4>
 
 			<select v-model="selectedRequestType">
 				<option>JavaScript XHR</option>
@@ -26,7 +26,7 @@
 			<h4>Resposta</h4><span class="badge" :class="{ 'error': api.error }">{{ api.message }}</span>
 			<div class="language-json extra-class"><pre class="language-json"><code>{{ stringfyRes(api.response) }}</code></pre></div>
 		</div>
-		<button id="send" @click.prevent="send(`${url}${path}`, method)">{{ ui.btnTest }} {{ path }}</button>
+		<button id="send" @click.prevent="send(`${url}${path}`, method)">{{ ui.btnTest }} {{ setPath }}</button>
 	</section>
 </template>
 
@@ -48,6 +48,10 @@ export default {
 		}
 	},
 	computed: {
+		setPath () { 
+			if (this.pathAlias === '') return this.path
+			else return this.pathAlias
+		},
 		selectedRequestType: {
 			get () {
 				return this.ui.requestType
@@ -98,9 +102,9 @@ xhr.send()`
 			return JSON.parse(jsonStr, null,2)
 		},
 		send (fullUrl, method) {
-			const oReq = new XMLHttpRequest()
 			this.api.message = 'Enviando solicitação...'
 
+			const oReq = new XMLHttpRequest()
 			oReq.addEventListener("load", evt => {
 				this.api.response = evt.target.response
 				this.api.message = 'Exemplo de resposta'
@@ -128,6 +132,10 @@ xhr.send()`
 			required: true
 		},
 		path: {
+			type: String,
+			default: ''
+		},
+		pathAlias: {
 			type: String,
 			default: ''
 		},
@@ -210,3 +218,11 @@ xhr.send()`
 	}
 }
 </script>
+<style lang='scss' scoped>
+.language-json {
+	max-height: 300px;
+
+overflow-x: hidden;
+}
+
+</style>

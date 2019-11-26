@@ -1,6 +1,6 @@
 module.exports = {
     base: process.env.CI ? '/outorga-backend/' : '/',
-    title: 'Sistema de controle e cadastro das OUCs',
+    title: 'Sistema de cadastro de outorga onerosa',
     description: 'Documentação da API REST do cadastro e acompanhamento de outorga onerosa controlados pela São Paulo Urbanismo',
     locales: {
         "/": {
@@ -9,7 +9,13 @@ module.exports = {
         }
     },
     themeConfig: {
-        search: false
-        // sidebar: [['/', 'Guide' ], ['/demos/intro', 'DEMO: Introduction']],
+        search: false,
+        nav: [
+            { text: 'Outorgas da OUCFL', link: 'https://spurb.github.io/relatorios/ouc-faria-lima' },
+            { text: 'Github', link: 'https://github.com/spurb/outorga-backend' },
+        ],
+        sidebar: [
+            '/'
+        ]
     }
 }
