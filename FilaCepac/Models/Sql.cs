@@ -13,9 +13,7 @@ namespace FilaCepac.Models
         public string NumeroSql { get; set; }
 
         [Column("id_fila_cepac")]
-        [ForeignKey("FilaCepac")]
         public int IdFilaCepac { get; set; }
-        public Fila FilaCepac { get; set; }
 
     }
 }
