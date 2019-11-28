@@ -1,14 +1,24 @@
 // http://smacss.com/
 /*
-    Base
-    Layout
-    Module
-    State
-    Theme
+	Base
+	Layout
+	Module
+	State
+	Theme
 */
 
 $grotesca: 'Roboto', 'Segoe UI', 'Helvetica', Arial, sans-serif;
 
 .theme-container {
-    font-family: $grotesca;
+	font-family: $grotesca;
+	.page > .content__default {
+		max-width: unset;
+		padding-left: 0;
+		padding-right: 0;
+		& > *:not(.pw-rest) {
+			padding-left: 2.5rem;
+			padding-right: 50%;
+			min-width: 320px;
+		}
+	}
 }
