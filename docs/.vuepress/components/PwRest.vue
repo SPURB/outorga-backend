@@ -24,6 +24,7 @@
 					</div>
 				</header>
 				<div 
+					id="reqExample"
 					class="extra-class"
 					:class="{ 
 						'language-sh': selectedRequestType === 'cURL',
@@ -32,13 +33,16 @@
 					@click.prevent="copyRequestExample(ui.requestExample)"
 					><pre><code>{{ ui.requestExample }}</code></pre><span class="onhover">Clique para copiar</span></div>
 			</div>
-			<button id="send" @click.prevent="send(`${url}${path}`, method)">{{ ui.btnTest }} {{ setPath }}</button>
+			<button id="send" :class="{ 'fetching': api.fetching }" @click.prevent="send(`${url}${path}`, method)">
+				<template v-if="api.fetching"><span>.</span><span>.</span><span>.</span></template>
+				<template v-else>{{ ui.btnTest }} <span class="reqName">/{{ setPath }}</span></template>
+			</button>
+			<span class="badge" :class="{ error: api.error, display: api.message }">{{ api.message }}</span>
 		</main>
 		<aside class="area response">
 			<div v-if="api.message !== ''" class="pw-rest__item">
 				<h4>Resposta</h4>
-				<span class="badge" :class="{ 'error': api.error }">{{ api.message }}</span>
-				<div class="language-json extra-class"><pre class="language-json"><code>{{ stringfyRes(api.response) }}</code></pre></div>
+				<div class="language-json extra-class" :class="{ ready: !api.fetching }"><pre class="language-json"><code>{{ api.response }}</code></pre></div>
 			</div>
 		</aside>
 	</section>
@@ -55,7 +59,8 @@ export default {
 				requestExample: '',
 			},
 			api: {
-				response: 'Enviando',
+				fetching: false,
+				response: '',
 				message: '',
 				error: false
 			}
@@ -86,7 +91,16 @@ export default {
 	},
 	methods: {
 		copyRequestExample(str) {
-			console.log(str)
+			const el = document.createElement('textarea')
+			el.value = str
+			document.body.appendChild(el)
+			el.select()
+			document.execCommand('copy')
+			document.body.removeChild(el)
+			const tip = document.createElement('span')
+			tip.classList.add('tip')
+			tip.innerText = 'Copiado'
+			document.querySelector('#reqExample').firstElementChild.appendChild(tip)
 		},
 		getRequestExample(reqType, method, reqUrl) {
 			if (method === 'GET') {
@@ -106,7 +120,6 @@ export default {
 					case 'JavaScript XHR': return `const xhr = new XMLHttpRequest()
 xhr.open('GET', '${reqUrl}', true, null, null)
 xhr.send()`
-
 					default: return `cURL -X GET ${reqUrl}`; break // default is cURL
 				}
 			}
@@ -116,22 +129,24 @@ xhr.send()`
 			return JSON.parse(jsonStr, null,2)
 		},
 		send (fullUrl, method) {
+			this.api.fetching = true
 			this.api.message = 'Enviando solicitação...'
-
 			const oReq = new XMLHttpRequest()
 			oReq.addEventListener("load", evt => {
-				this.api.response = evt.target.response
+				this.api.response = this.stringfyRes(evt.target.response)
+				this.api.fetching = false
 				this.api.message = null
 				this.ui.btnTest = 'Testar novamente'
 			})
 			oReq.addEventListener("error", evt => {
 				this.api.response = evt.target.response
+				this.api.fetching = false
 				this.api.message = 'Erro! A requisição falhou'
 			})
 			oReq.addEventListener("abort", evt => {
+				this.api.fetching = false
 				this.api.message = 'Erro! A requisição foi cancelada'
 			})
-
 			oReq.open(method, fullUrl, true, null, null)
 			oReq.send()
 		}
@@ -239,15 +254,18 @@ xhr.send()`
 	height: calc(100vh - 57px); // header height = 57.6px
 	padding: 4.5rem 5rem;
 	border-bottom: 1px solid rgba(0, 0, 0, .04);
+	overflow: hidden;
 	&:nth-of-type(2n) { background-color: rgba(0, 0, 0, .02); }
 	& > *:first-child { margin-top: 0; }
 	& > *:last-child { margin-bottom: 0; }
 	display: grid;
-	grid: min-content auto / repeat(2, 50%);
+	grid: min-content auto / 40% 60%;
 	grid-column-gap: 2.5rem;
 	& > h3 {
 		grid-column: 1 / span 2;
+		padding-bottom: 0.5rem;
 		margin-bottom: 2rem;
+		border-bottom: 1px solid #EEE;
 		span {
 			font-size: 1rem;
 			font-weight: normal;
@@ -310,9 +328,16 @@ xhr.send()`
 			.extra-class {
 				position: relative;
 				margin: 0 0 2rem 0;
+				background-color: #222;
 				& > pre {
+					position: relative;
 					margin: 0;
 					cursor: default;
+					& > span.tip {
+						position: absolute;
+						top: 50%;
+						left: 50%;
+					}
 				}
 				& > span.onhover {
 					position: absolute;
@@ -326,7 +351,7 @@ xhr.send()`
 				&:hover > span.onhover { opacity: 1; }
 			}
 		}
-		button#send {
+		#send {
 			width: 100%;
 			padding: 1.5rem 2rem;
 			background: #008375;
@@ -337,8 +362,16 @@ xhr.send()`
 			border-radius: 0.5rem;
 			cursor: pointer;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, .24);
+			text-shadow: 0 2px 2px rgba(0, 0, 0, .5);
 			transform: translateY(0);
 			transition: all ease-in .1s;
+			span.reqName {
+				padding: 0.25rem 0.5rem;
+				font-size: 1.15rem;
+				background-color: rgba(255, 255, 255, .24);
+				border-radius: 0.25rem;
+				margin-left: 0.25rem;
+			}
 			&:hover {
 				border-color: rgba(255, 255, 255, .32);
 			}
@@ -346,9 +379,72 @@ xhr.send()`
 				box-shadow: 0 2px 4px rgba(0, 0, 0, .48);
 				transform: translateY(2px);
 			}
+			&.fetching {
+				@keyframes loading {
+					from {
+						transform: translateY(-0.25rem);
+					}
+					to {
+						transform: translateY(0);
+					}
+				}
+				span {
+					display: inline-block;
+					&:nth-child(1) { animation: loading ease-in-out alternate infinite .3s .0s; }
+					&:nth-child(2) { animation: loading ease-in-out alternate infinite .3s .05s; }
+					&:nth-child(3) { animation: loading ease-in-out alternate infinite .3s .1s; }
+				}
+			}
+		}
+		#send + span.badge {
+			display: block;
+			margin: 1rem 0 0;
+			text-align: center;
+			opacity: 0;
+			transition: all ease-out .4s;
+			&.display {
+				opacity: 1;
+				transition: all ease-out .4s;
+			}			
 		}
 	}
-	& > .response {}
+	& > .response {
+		max-height: 100%;
+		overflow: hidden;		
+		@keyframes surge {
+			0% {
+				opacity: 0;
+			}
+			100% {
+				opacity: 1;	
+			}
+		}
+		h4 {
+			margin: 0 0 1rem;
+			animation: surge ease-in .2s;
+		}
+		.extra-class {
+			animation: surge ease-in .4s;
+			background-color: #222;
+			height: 100%;
+			max-height: 0px;
+			overflow: hidden;
+			transition: all ease-in .2s;
+			pre {
+				margin: 0;
+				overflow: scroll;
+				max-height: calc(100vh - 58px - 18rem);
+				height: 100%;
+			}
+			&[class*="language-"]::before {
+				right: 2rem;
+			}
+			&.ready {
+				max-height: calc(100vh - 2.5rem);
+				overflow: auto;
+			}
+		}
+	}
 }
 
 </style>
