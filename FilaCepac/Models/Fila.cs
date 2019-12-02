@@ -78,6 +78,12 @@ namespace FilaCepac.Models
         [Column("dt_alteracao_registro")]
         public DateTime? DataAlteracao { get; set; }
 
+        [Column("nm_tipo_pedido")]
+        public string TipoPedido { get; set; }
+
+        [Column("nr_area_registro_imovel")]
+        public decimal? AreaRegistro { get; set; }
+
         [Column("id_status")]
         [ForeignKey("Status")]
         public int? IdStatus { get; set; }
