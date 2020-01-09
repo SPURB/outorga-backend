@@ -1,10 +1,10 @@
 ﻿using FilaCepac.Data;
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using Log;
 
 namespace FilaCepac.Controllers
 {
@@ -13,9 +13,10 @@ namespace FilaCepac.Controllers
     {
 
         protected static readonly string DeniedHost = "servicos.spurbanismo.sp.gov.br";
-        protected static readonly ILog Logger = LogManager.GetLogger(typeof(MainAPIController));
         
         protected readonly FilaCepacContext db = new FilaCepacContext();
+
+        protected static readonly Logger Logger = new Logger();
 
         /*
          * Verifica o host da requisicao está na lista
@@ -37,14 +38,22 @@ namespace FilaCepac.Controllers
                 return false;
             }
             string user = this.GetDomainUser(User.Identity.Name);
-            */
-            IEnumerable<string> values;
-            string user = null;
-            if (Request.Headers.TryGetValues("", out values))
-            {
-                user = values.FirstOrDefault();
-            }
             return db.Autorizacoes.Count(a => a.Usuario.Equals(user)) > 0;
+            */
+            
+            IEnumerable<string> values;
+            if (Request.Headers.TryGetValues("Authorization", out values))
+            {
+                string user = values.FirstOrDefault();
+                return db.Autorizacoes.Count(
+                    a => a.Usuario.ToUpper().Equals(user.ToUpper())
+                    && a.Ativo
+                ) > 0;
+            }
+            Logger.Write("Requisição sem informação do usuário para autorizar.");
+            return false;
+            
+            
         }
 
         private string GetDomainUser(string user)

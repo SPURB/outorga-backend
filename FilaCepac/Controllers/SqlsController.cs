@@ -15,7 +15,6 @@ namespace FilaCepac.Controllers
 {
     public class SqlsController : MainAPIController
     {
-        private readonly FilaCepacContext db = new FilaCepacContext();
 
         // GET: api/Sqls
         public IQueryable<Sql> GetSqls([FromUri] Sql sql)

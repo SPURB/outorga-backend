@@ -15,7 +15,7 @@ namespace FilaCepac.Controllers
 {
     public class StatusController : MainAPIController
     {
-        private FilaCepacContext db = new FilaCepacContext();
+
 
         // GET: api/Status
         public IQueryable<Status> GetStatus()

@@ -1,5 +1,6 @@
 ﻿using FilaCepac.Data;
 using FilaCepac.Models;
+using Log;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,13 +8,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using log4net;
 
 namespace FilaCepac.Controllers
 {
     public class EstoqueController : ApiController
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(EstoqueController));
+        private static readonly Logger Logger = new Logger();
 
         private readonly FilaCepacContext db = new FilaCepacContext();
 
@@ -37,7 +37,7 @@ namespace FilaCepac.Controllers
             }
             catch(Exception ex)
             {
-                Logger.Error("Erro ao consultar a view de estoques.", ex);
+                Logger.Write("Erro ao consultar a view de estoques.", ex);
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
 

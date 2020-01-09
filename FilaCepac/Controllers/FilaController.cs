@@ -8,21 +8,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using System.Web.Http.Description;
-using FilaCepac.Authorize;
-using FilaCepac.Data;
 using FilaCepac.Models;
+using Log;
 
 namespace FilaCepac.Controllers
 {
-
+    [EnableCors(origins:"*", headers:"*", methods:"*")]
     public class FilaController : MainAPIController
     {
 
         // GET: api/Fila
         public IQueryable<Fila> GetFilas([FromUri] Fila filaQuery)
         {
-
             try
             {
 
@@ -52,7 +51,7 @@ namespace FilaCepac.Controllers
             }
             catch(Exception ex)
             {
-                Logger.Error("Erro ao obter dados da fila.", ex);
+                Logger.Write("Erro ao obter dados da fila.", ex);
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
             
@@ -82,7 +81,7 @@ namespace FilaCepac.Controllers
                 return Ok(fila);
             }catch(Exception ex)
             {
-                Logger.Error("Erro ao obter dados da fila.", ex);
+                Logger.Write("Erro ao obter dados da fila.", ex);
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
         }
@@ -102,10 +101,10 @@ namespace FilaCepac.Controllers
             }
             if (!ModelState.IsValid)
             {
-                Logger.Error("Dados inválidos.");
+                Logger.Write("Dados da fila inválidos.");
                 foreach (var err in ModelState.Keys)
                 {
-                    Logger.Error(err);
+                    Logger.Write(err);
                 }
                 return BadRequest(ModelState);
             }
@@ -143,7 +142,7 @@ namespace FilaCepac.Controllers
                     throw;
                 }
             }catch(Exception ex){
-                Logger.Error("Erro ao obter dados da fila.", ex);
+                Logger.Write("Erro ao obter dados da fila.", ex);
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
 
@@ -164,15 +163,14 @@ namespace FilaCepac.Controllers
             }
             if (!ModelState.IsValid)
             {
-                Logger.Error("Dados inválidos.");
+                Logger.Write("Dados inválidos.");
                 foreach(var err in ModelState.Keys)
                 {
-                    Logger.Error(err);
+                    Logger.Write(err);
                 }
                 return BadRequest(ModelState);
             }
             fila.DataAlteracao = DateTime.Now;
-            fila.UsuarioAlteracao = User.Identity.Name;
             db.Filas.Add(fila);
             try
             {
@@ -181,7 +179,7 @@ namespace FilaCepac.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Erro ao obter dados da fila.", ex);
+                Logger.Write("Erro ao obter dados da fila.", ex);
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
 
