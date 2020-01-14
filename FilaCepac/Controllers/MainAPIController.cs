@@ -78,10 +78,8 @@ namespace FilaCepac.Controllers
             {
                 var origVal = prop.GetValue(origObj, null);
                 var newVal = prop.GetValue(newObj, null);
-                Logger.Write("UPDATE " + prop.Name + " OLD: " + origVal + " NEW: " + newVal);
                 if ( (newVal != null && origVal != newVal) && !(newVal is int num && num == 0) )
                 {
-                    Logger.Write("UPDATE Aceito " + prop.Name);
                     prop.SetValue(origObj, newVal, null);
                 }
             }
