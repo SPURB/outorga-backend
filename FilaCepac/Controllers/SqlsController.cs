@@ -144,8 +144,16 @@ namespace FilaCepac.Controllers
             {
                 return NotFound();
             }
-            db.Sqls.Remove(sql);
-            return StatusCode(HttpStatusCode.NoContent);
+            try
+            {
+                db.Sqls.Remove(sql);
+                db.SaveChanges();
+                return StatusCode(HttpStatusCode.NoContent);
+            }catch(Exception ex)
+            {
+                Logger.Write("Erro ao excluir SQL ", ex);
+                return InternalServerError();
+            }
 
         }
 
