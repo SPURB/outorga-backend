@@ -132,7 +132,7 @@ namespace FilaCepac.Controllers
                 }
             }
             fila.DataAlteracao = DateTime.Now;
-            fila.UsuarioAlteracao = User.Identity.Name;
+            //fila.UsuarioAlteracao = User.Identity.Name;
             fila = (Fila)UpdateObject(fila, db.Filas.Find(id));
 
             db.Entry(fila).State = EntityState.Modified;
@@ -152,7 +152,7 @@ namespace FilaCepac.Controllers
                     throw;
                 }
             }catch(Exception ex){
-                Logger.Write("Erro ao obter dados da fila.", ex);
+                Logger.Write("Erro ao salvar dados da fila.", ex);
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
             }
 
