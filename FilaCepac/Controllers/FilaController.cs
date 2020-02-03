@@ -46,6 +46,13 @@ namespace FilaCepac.Controllers
                 {
                     result = result.Where(f => f.IdStatus == filaQuery.IdStatus);
                 }
+                if (!IsAllowedHost())
+                {
+                    foreach(var r in result)
+                    {
+                        r.RemoveSensitiveData();
+                    }
+                }
 
                 return result;
             }
@@ -77,7 +84,10 @@ namespace FilaCepac.Controllers
                 {
                     return NotFound();
                 }
-
+                if (!IsAllowedHost())
+                {
+                    fila.RemoveSensitiveData();
+                }
                 return Ok(fila);
             }catch(Exception ex)
             {

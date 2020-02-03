@@ -16,7 +16,7 @@ namespace FilaCepac.Controllers
         
         protected readonly FilaCepacContext db = new FilaCepacContext();
 
-        protected static readonly Logger Logger = new Logger();
+        protected static readonly Logger Logger = new Logger("C:\\inetpub\\logs\\", "filacepac");
 
         /*
          * Verifica o host da requisicao está na lista
@@ -78,7 +78,7 @@ namespace FilaCepac.Controllers
             {
                 var origVal = prop.GetValue(origObj, null);
                 var newVal = prop.GetValue(newObj, null);
-                if (newVal != null && origVal != newVal)
+                if ( (newVal != null && origVal != newVal) && !(newVal is int num && num == 0) )
                 {
                     prop.SetValue(origObj, newVal, null);
                 }

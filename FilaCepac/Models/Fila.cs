@@ -94,6 +94,17 @@ namespace FilaCepac.Models
         public int? IdSetor { get; set; }
         public Setor SetorObj { get; set; }
 
+        /*
+         *
+         * 
+         */
+        public void RemoveSensitiveData()
+        {
+            this.Email = String.Empty;
+            this.Telefone = String.Empty;
+            this.Obs = String.Empty;
+        }
+
 
         //public ICollection<Sql> Sqls { get; set; }
 
