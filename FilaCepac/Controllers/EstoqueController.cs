@@ -13,7 +13,7 @@ namespace FilaCepac.Controllers
 {
     public class EstoqueController : ApiController
     {
-        private static readonly Logger Logger = new Logger();
+        private static readonly Logger Logger = new Logger("C:\\inetpub\\logs\\", "filacepac");
 
         private readonly FilaCepacContext db = new FilaCepacContext();
 

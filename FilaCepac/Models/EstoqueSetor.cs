@@ -13,13 +13,13 @@ namespace FilaCepac.Models
 
         public int Setor { get; set; }
 
-        public decimal AreaAdicionalR { get; set; }
+        public decimal? AreaAdicionalR { get; set; }
 
-        public decimal AreaAdicionalNR { get; set; }
+        public decimal? AreaAdicionalNR { get; set; }
 
-        public int CepacACA { get; set; }
+        public int? CepacACA { get; set; }
 
-        public int CepacUsoParam { get; set; }
+        public int? CepacUsoParam { get; set; }
 
         public int IdStatus { get; set; }
 
