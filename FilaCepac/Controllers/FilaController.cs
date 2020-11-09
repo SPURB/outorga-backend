@@ -46,6 +46,14 @@ namespace FilaCepac.Controllers
                 {
                     result = result.Where(f => f.IdStatus == filaQuery.IdStatus);
                 }
+                if (filaQuery.IdGeo != null)
+                {
+                    result = result.Where(f => f.IdGeo == filaQuery.IdGeo);
+                }
+                if (filaQuery.IdOpUrbanaSrc != null)
+                {
+                    result = result.Where(f => f.SetorObj.IdOperacaoUrbana == filaQuery.IdOpUrbanaSrc);
+                }
                 if (!IsAllowedHost())
                 {
                     foreach(var r in result)

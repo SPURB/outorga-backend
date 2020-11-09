@@ -449,3 +449,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+#CFG Sensitive
+.cfg
+*.cfg

@@ -28,5 +28,8 @@ namespace FilaCepac.Data
         public System.Data.Entity.DbSet<FilaCepac.Models.Sql> Sqls { get; set; }
 
         public System.Data.Entity.DbSet<FilaCepac.Models.Autorizacao> Autorizacoes { get; set; }
+
+        public System.Data.Entity.DbSet<FilaCepac.Models.ArquivoFila> ArquivosFila { get; set; }
+
     }
 }

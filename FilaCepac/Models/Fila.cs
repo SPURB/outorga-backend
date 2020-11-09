@@ -94,6 +94,12 @@ namespace FilaCepac.Models
         public int? IdSetor { get; set; }
         public Setor SetorObj { get; set; }
 
+        [Column("id_geo")]
+        public int? IdGeo { get; set; }
+
+        [NotMapped]
+        public int? IdOpUrbanaSrc { get; set; }
+
         /*
          *
          * 

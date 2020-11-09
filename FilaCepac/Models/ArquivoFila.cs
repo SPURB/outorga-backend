@@ -9,16 +9,12 @@ namespace FilaCepac.Models
     [Table("ouc.tb_fila_arquivos")]
     public class ArquivoFila : Entity
     {
-        [Column("nm_arquivo")]
-        public string Nome { get; set; }
-
-        [Column("nm_url")]
-        public string Url { get; set; }
+        //API Externa arquivos
+        [Column("id_arquivo")]
+        public string IdArquivo { get; set; }
 
         [Column("id_fila_cepac")]
-        [ForeignKey("FilaCepac")]
         public int IdFilaCepac { get; set; }
-        public Fila FilaCepac { get; set; }
 
     }
 }
